@@ -12,8 +12,13 @@ import {
 
 // This bot's main dialog.
 import { TeamsBot } from "./teamsBot";
-import config from "./config";
+import config from "./config"; 
 
+let appInsights = require("applicationinsights");
+appInsights.setup(process.env.BOT_APPINSIGHTS_INSTRUMENTATIONKEY);
+appInsights.start();
+var client = appInsights.defaultClient; 
+ 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
 const credentialsFactory = new ConfigurationServiceClientCredentialFactory({
@@ -43,7 +48,16 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
     "https://www.botframework.com/schemas/error",
     "TurnError"
   );
+ 
+  client.trackEvent(
+    {name: "my custom event", 
+    properties: {customProperty: error.message}
+   }
+  );
 
+  client.trackException({exception: new Error("handled exceptions can be logged with this method")});
+
+  client.flush();
   // Send a message to the user
   await context.sendActivity(`The bot encountered unhandled error:\n ${error.message}`);
   await context.sendActivity("To continue to run this bot, please fix the bot source code.");

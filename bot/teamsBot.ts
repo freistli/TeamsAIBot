@@ -1,4 +1,3 @@
-import { default as axios } from "axios";
 import * as querystring from "querystring";
 import {
   TeamsActivityHandler,
@@ -15,6 +14,7 @@ import {
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
+import axios from 'axios';
 
 export interface DataInterface {
   likeCount: number;
@@ -55,6 +55,20 @@ export class TeamsBot extends TeamsActivityHandler {
         case "exception": {
           throw new Error("Test Exception thrown from the bot.");
           break;
+        }
+        default : {                    
+          //Post the message to a REST API endpoint as a json string
+          try{
+          //const axiosInstance = axios.create();
+          const postData = { prompt:txt, name: '', messageId: '' }; 
+          const headers = { 'Content-Type': 'application/json' };
+          const response = await axios.post(process.env.Azure_ChatGPT_Function_Url, JSON.stringify(postData),{headers: headers});
+          await context.sendActivity(response.data.text);
+          }
+          catch(error){
+            console.log(error);
+          }
+       break;
         }
         /**
          * case "yourCommand": {
