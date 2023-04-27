@@ -38,9 +38,11 @@ BOT_APPINSIGHTS_CONNECTIONSTRING=xxxxxxxxxx
 
 After published to Azure, please explicitly add below varaibles in Application Settings of the bot web app service:
 
+```
 Azure_ChatGPT_Function_Url
 BOT_APPINSIGHTS_INSTRUMENTATIONKEY
 BOT_APPINSIGHTS_CONNECTIONSTRING
+```
 
 # More Info
 
