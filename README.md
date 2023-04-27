@@ -35,3 +35,9 @@ BOT_APPINSIGHTS_CONNECTIONSTRING=xxxxxxxxxx
 ```
 
 6. Now you can local test the Bot in Teams or publish it to Azure.
+
+# More Info
+
+For express deployment Teams AI ChatGPT Bot, and Teams specific features with ChatGPT, LLMs integration, can check:
+
+https://github.com/freistli/rootbot
