@@ -10,11 +10,11 @@ This simple Bot is developed using Teams Toolkit (TypeScript). As a sample proje
 1. git clone the project
 2. Open it in VS Code, the VS Code should install [Teams Toolkit extension](https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/install-teams-toolkit?tabs=vscode&pivots=visual-studio-code).
 3. Provision the project to Azure
-4. Publish the Azure Fucntion in VS Code from below link:
+4. Publish the Azure Fucntion in VS Code from below github project:
 
 https://github.com/freistli/chatgpt-api/tree/main/demos/demo-azure-chatgpt-function
 
-After publishing it,  configure below two keys in Application Settings:
+After publishing it, configure below three variables in Azure Function Application Settings:
 
 ```
 AZURE_OPENAI_API_KEY
