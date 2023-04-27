@@ -34,7 +34,13 @@ BOT_APPINSIGHTS_INSTRUMENTATIONKEY=xxxxxxxxx
 BOT_APPINSIGHTS_CONNECTIONSTRING=xxxxxxxxxx
 ```
 
-6. Now you can local test the Bot in Teams or publish it to Azure.
+6. Now you can local test the Bot in Teams or publish it to Azure. 
+
+After published to Azure, please explicitly add below varaibles in Application Settings of the bot web app service:
+
+Azure_ChatGPT_Function_Url
+BOT_APPINSIGHTS_INSTRUMENTATIONKEY
+BOT_APPINSIGHTS_CONNECTIONSTRING
 
 # More Info
 
