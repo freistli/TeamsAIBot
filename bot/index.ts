@@ -8,6 +8,9 @@ import {
   ConfigurationServiceClientCredentialFactory,
   ConfigurationBotFrameworkAuthentication,
   TurnContext,
+  ConversationState,
+  MemoryStorage,
+  UserState
 } from "botbuilder";
 
 // This bot's main dialog.
@@ -31,6 +34,12 @@ const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(
   {},
   credentialsFactory
 );
+
+const memoryStorage = new MemoryStorage();
+
+// Create conversation and user state with in-memory storage provider.
+const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
 
 const adapter = new CloudAdapter(botFrameworkAuthentication);
 
@@ -61,13 +70,16 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
   // Send a message to the user
   await context.sendActivity(`The bot encountered unhandled error:\n ${error.message}`);
   await context.sendActivity("To continue to run this bot, please fix the bot source code.");
+
+  // Clear out state
+  await conversationState.delete(context);
 };
 
 // Set the onTurnError for the singleton CloudAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
 // Create the bot that will handle incoming messages.
-const bot = new TeamsBot();
+const bot = new TeamsBot(conversationState, userState);
 
 // Create HTTP server.
 const server = restify.createServer();

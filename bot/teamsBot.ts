@@ -15,22 +15,44 @@ import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import axios from 'axios';
+import UserProfile from "./userProfile"
 
 export interface DataInterface {
   likeCount: number;
 }
 
+const CONVERSATION_DATA_PROPERTY = 'conversationData';
+const USER_PROFILE_PROPERTY = 'userProfile';
+
 export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
   likeCountObj: { likeCount: number };
+  conversationDataAccessor: any;
+  userProfileAccessor: any;
+  conversationState: any;
+  userState: any;
 
-  constructor() {
+  constructor(conversationState, userState) {
     super();
 
+     // Create the state property accessors for the conversation data and user profile.
+     this.conversationDataAccessor = conversationState.createProperty(CONVERSATION_DATA_PROPERTY);
+     this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
+
+     // The state management objects for the conversation and user state.
+     this.conversationState = conversationState;
+     this.userState = userState;
+
     this.likeCountObj = { likeCount: 0 };
+    
 
     this.onMessage(async (context, next) => {
       console.log("Running with Message Activity.");
+
+      // Get the state properties from the turn context.
+     const userProfile: UserProfile = await this.userProfileAccessor.get(context, {});
+     const conversationData = await this.conversationDataAccessor.get(
+      context, { });
 
       let txt = context.activity.text;
       const removedMentionText = TurnContext.removeRecipientMention(context.activity);
@@ -52,17 +74,27 @@ export class TeamsBot extends TeamsActivityHandler {
           await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
           break;
         }
+        case "bye": {
+          userProfile.messageId = '';
+          await context.sendActivity("Good Bye!");
+          // Clear out state
+          await this.conversationState.delete(context);
+          break;
+        }
         case "exception": {
           throw new Error("Test Exception thrown from the bot.");
           break;
         }
         default : {                    
           //Post the message to a REST API endpoint as a json string
-          try{
-          //const axiosInstance = axios.create();
-          const postData = { prompt:txt, name: '', messageId: '' }; 
+          try{ 
+          console.log(userProfile.messageId);
+          const postData = { prompt:txt, name: '', messageId: userProfile.messageId }; 
           const headers = { 'Content-Type': 'application/json' };
           const response = await axios.post(process.env.Azure_ChatGPT_Function_Url, JSON.stringify(postData),{headers: headers});
+          userProfile.messageId = response.data.id;
+          console.log(userProfile.messageId);
+
           await context.sendActivity(response.data.text);
           }
           catch(error){
@@ -101,6 +133,16 @@ export class TeamsBot extends TeamsActivityHandler {
       await next();
     });
   }
+
+  /**
+ * Override the ActivityHandler.run() method to save state changes after the bot logic completes.
+ */
+async run(context) {
+  await super.run(context);
+  // Save any state changes. The load happened during the execution of the Dialog.
+  await this.conversationState.saveChanges(context, false);
+  await this.userState.saveChanges(context, false);
+}
 
   // Invoked when an action is taken on an Adaptive Card. The Adaptive Card sends an event to the Bot and this
   // method handles that event.
