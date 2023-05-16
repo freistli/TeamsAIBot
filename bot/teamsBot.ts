@@ -11,6 +11,7 @@ import {
   MessagingExtensionActionResponse,
   AppBasedLinkQuery,
   ActivityTypes,
+  MessageFactory,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
@@ -91,13 +92,15 @@ export class TeamsBot extends TeamsActivityHandler {
           try {
 
             if (userProfile.waitingFor === 'true') {
-              const msg = "Please wait for a moment, I am still thinking...";
+              const msg = "Please wait for a moment, I am still thinking ...";
               console.log(msg);
               await context.sendActivity(msg);
             }
             else {
               console.log(userProfile.messageId);
-              await context.sendActivities([
+              const reply = await context.sendActivity("Searching ...");
+
+             const typingReply = await context.sendActivities([
                 { type: ActivityTypes.Typing }
               ]);
 
@@ -113,7 +116,13 @@ export class TeamsBot extends TeamsActivityHandler {
               userProfile.waitingFor = 'false';
               await this.userState.saveChanges(context, false);
 
-              await context.sendActivity(response.data.text);
+              //await context.sendActivity(response.data.text);
+
+              const newActivity = MessageFactory.text(response.data.text);
+              newActivity.id = reply.id;
+              await context.updateActivity(newActivity);
+
+              await context.sendActivity("```Saerch Completed!```");
             }
           }
 
