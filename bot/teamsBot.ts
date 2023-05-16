@@ -122,7 +122,7 @@ export class TeamsBot extends TeamsActivityHandler {
               newActivity.id = reply.id;
               await context.updateActivity(newActivity);
 
-              await context.sendActivity("```Saerch Completed!```");
+              await context.sendActivity("```Search Completed!```");
             }
           }
 
