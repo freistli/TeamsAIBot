@@ -11,8 +11,8 @@ build
 .fx/states/state.dev.json
 
 env
-!env/env.dev.sample
+!/env/env.dev.sample
 .backup/*
 /devTools/
 azure.parameters.dev.json
-templates/azure/azure.parameters.dev.json
+/templates/azure/azure.parameters.dev.json
