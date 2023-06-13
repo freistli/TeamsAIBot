@@ -10,8 +10,9 @@ build
 .fx/states/state.local.json
 .fx/states/state.dev.json
 
-env
-! env/.env.dev.sample
+env/.env.dev*
+env/.env.local*
+!env/.env.dev.sample
 .backup/*
 /devTools/
 azure.parameters.dev.json
