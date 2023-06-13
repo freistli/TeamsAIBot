@@ -2,7 +2,7 @@
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.14/MicrosoftTeams.schema.json",
     "manifestVersion": "1.14",
     "version": "1.0.0",
-    "id": "{{state.fx-resource-appstudio.teamsAppId}}",
+    "id": "${{TEAMS_APP_ID}}",
     "packageName": "com.microsoft.teams.extension",
     "developer": {
         "name": "Teams App, Inc.",
@@ -11,21 +11,21 @@
         "termsOfUseUrl": "https://www.example.com/privacy"
     },
     "icons": {
-        "color": "{{config.manifest.icons.color}}",
-        "outline": "{{config.manifest.icons.outline}}"
+        "color": "${{CONFIG__MANIFEST__ICONS__COLOR}}",
+        "outline": "${{CONFIG__MANIFEST__ICONS__OUTLINE}}"
     },
     "name": {
-        "short": "{{config.manifest.appName.short}}",
-        "full": "{{config.manifest.appName.full}}"
+        "short": "${{CONFIG__MANIFEST__APPNAME__SHORT}}",
+        "full": "${{CONFIG__MANIFEST__APPNAME__FULL}}"
     },
     "description": {
-        "short": "{{config.manifest.description.short}}",
-        "full": "{{config.manifest.description.full}}"
+        "short": "${{CONFIG__MANIFEST__DESCRIPTION__SHORT}}",
+        "full": "${{CONFIG__MANIFEST__DESCRIPTION__FULL}}"
     },
     "accentColor": "#FFFFFF",
     "bots": [
         {
-            "botId": "{{state.fx-resource-bot.botId}}",
+            "botId": "${{BOT_ID}}",
             "scopes": [
                 "personal",
                 "team",
@@ -62,6 +62,6 @@
         "messageTeamMembers"
     ],
     "validDomains": [
-        "{{state.fx-resource-bot.domain}}"
+        "${{PROVISIONOUTPUT__AZUREWEBAPPBOTOUTPUT__DOMAIN}}"
     ]
 }
