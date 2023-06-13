@@ -9,6 +9,7 @@ import {
   ConfigurationBotFrameworkAuthentication,
   MemoryStorage,
   TurnContext,
+  InputHints,
 } from "botbuilder";
 
 import config from "./config"; 
@@ -59,7 +60,7 @@ const moderator = new OpenAIModerator({
   moderate: 'both'
 });
 
-const promptManager = new DefaultPromptManager<ApplicationTurnState>(path.join(__dirname, '../src/prompts'));
+const promptManager = new DefaultPromptManager<ApplicationTurnState>(path.join(__dirname, '../bot/prompts'));
 
 const app = new Application<ApplicationTurnState>({
     storage,
@@ -124,8 +125,17 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 app.message('/reset', async (context: TurnContext, state: ApplicationTurnState) => {
   state.conversation.delete();
   await context.sendActivity(`Ok I've deleted the current conversation state.`);
+  
 });
 
+const inputText = "(.*)?";
+app.message(inputText, async (context, state) => {
+  await context.sendActivity(`Ok ${context.activity.from.name}, I'm listening. ${inputText.match[0]}`);
+});
+
+app.message('/help', async (context: TurnContext, state: ApplicationTurnState) => {
+  await context.sendActivity(`Input /reset to clear conversation state.`);  
+});
 
 // Listen for incoming requests.
 server.post("/api/messages", async (req, res) => {
