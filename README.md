@@ -8,8 +8,8 @@ This simple Bot is developed using Teams Toolkit (TypeScript). As a sample proje
 # How to build 
 
 1. git clone the project
-2. Open it in VS Code, the VS Code should install [Teams Toolkit extension](https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/install-teams-toolkit?tabs=vscode&pivots=visual-studio-code).
-3. Modify **toolkitbotf67a4fbot** to a different name in **.fx/configs/azure.parameters.dev.json**
+2. Open it in VS Code, the VS Code should install latest (05/17/2023) [Teams Toolkit extension](https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/install-teams-toolkit?tabs=vscode&pivots=visual-studio-code).
+3. Modify **toolkitbot230613** to a different name in **templates/azure/azure.parameters.dev.json**
 4. Provision the project to Azure
 5. Publish the Azure Fucntion in VS Code from below github project:
 
@@ -25,7 +25,7 @@ CHATGPT_DEPLOY_NAME
 
 Copy the Azure Function URL for step 5.
 
-5. Add below varaibles in the .env.teamsfx.local:
+5. Add below varaibles in the /bot/.env.teamsfx.local for local debutg:
 
 ```
 # Following variables can be customized or you can add your owns.
