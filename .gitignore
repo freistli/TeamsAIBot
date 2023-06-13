@@ -13,3 +13,5 @@ build
 env
 .backup/*
 /devTools/
+templates/azure/azure.parameters.dev.json
+!env/.env.dev.sample
