@@ -6,7 +6,7 @@
       "value": {
         "botAadAppClientId": "${{BOT_ID}}",
         "botAadAppClientSecret": "${{SECRET_BOT_PASSWORD}}",
-        "resourceBaseName": "toolkitbotf67a4f"
+        "resourceBaseName": "toolkitbot230613"
       }
     }
   }

@@ -13,7 +13,6 @@ build
 env/.env.dev*
 env/.env.local*
 !env/.env.dev.sample
+!env/.env.local.sample
 .backup/*
 /devTools/
-azure.parameters.dev.json
-/templates/azure/azure.parameters.dev.json
