@@ -1,6 +1,5 @@
 import * as querystring from "querystring";
 import {
-  TeamsActivityHandler,
   CardFactory,
   TurnContext,
   AdaptiveCardInvokeValue,
@@ -12,12 +11,13 @@ import {
   AppBasedLinkQuery,
   ActivityTypes,
   MessageFactory,
+  TeamsActivityHandler,
 } from "botbuilder";
 import rawWelcomeCard from "./adaptiveCards/welcome.json";
 import rawLearnCard from "./adaptiveCards/learn.json";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import axios from 'axios';
-import UserProfile from "./userProfile"
+import {UserState} from "./BotStates"
 
 export interface DataInterface {
   likeCount: number;
@@ -25,6 +25,8 @@ export interface DataInterface {
 
 const CONVERSATION_DATA_PROPERTY = 'conversationData';
 const USER_PROFILE_PROPERTY = 'userProfile';
+
+
 
 export class TeamsBot extends TeamsActivityHandler {
   // record the likeCount
@@ -52,7 +54,7 @@ export class TeamsBot extends TeamsActivityHandler {
       console.log("Running with Message Activity.");
 
       // Get the state properties from the turn context.
-      const userProfile: UserProfile = await this.userProfileAccessor.get(context, {});
+      const userProfile: UserState = await this.userProfileAccessor.get(context, {});
       const conversationData = await this.conversationDataAccessor.get(
         context, {});
 

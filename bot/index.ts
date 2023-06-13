@@ -7,15 +7,19 @@ import {
   CloudAdapter,
   ConfigurationServiceClientCredentialFactory,
   ConfigurationBotFrameworkAuthentication,
-  TurnContext,
-  ConversationState,
   MemoryStorage,
-  UserState
+  TurnContext,
 } from "botbuilder";
 
-// This bot's main dialog.
-import { TeamsBot } from "./teamsBot";
 import config from "./config"; 
+import { Application, 
+  DefaultPromptManager, 
+  DefaultTurnState, 
+  OpenAIModerator, 
+  OpenAIPlanner 
+} from "@microsoft/teams-ai";
+import { UserState, ConversationState,TempState } from "./BotStates";
+import path from "path";
 
 let appInsights = require("applicationinsights");
 appInsights.setup(process.env.BOT_APPINSIGHTS_INSTRUMENTATIONKEY);
@@ -35,11 +39,40 @@ const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(
   credentialsFactory
 );
 
-const memoryStorage = new MemoryStorage();
 
-// Create conversation and user state with in-memory storage provider.
-const conversationState = new ConversationState(memoryStorage);
-const userState = new UserState(memoryStorage);
+
+// DefaultTurnState: Conversation State, UserState, TempState
+type ApplicationTurnState = DefaultTurnState<ConversationState, UserState, TempState>;
+
+// New:
+// Define storage and application
+const storage = new MemoryStorage();
+
+// Create AI components
+const planner = new OpenAIPlanner({
+  apiKey: process.env.OPENAI_API_KEY,
+  defaultModel: 'text-davinci-003',
+  logRequests: true
+});
+const moderator = new OpenAIModerator({
+  apiKey: process.env.OPENAI_API_KEY,
+  moderate: 'both'
+});
+
+const promptManager = new DefaultPromptManager<ApplicationTurnState>(path.join(__dirname, '../src/prompts'));
+
+const app = new Application<ApplicationTurnState>({
+    storage,
+     ai: {
+      planner,
+      moderator,
+      promptManager,
+      prompt: 'chat',
+      history: {
+          assistantHistoryType: 'text'
+      }
+  }
+});
 
 const adapter = new CloudAdapter(botFrameworkAuthentication);
 
@@ -71,15 +104,14 @@ const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
   await context.sendActivity(`The bot encountered unhandled error:\n ${error.message}`);
   await context.sendActivity("To continue to run this bot, please fix the bot source code.");
 
-  // Clear out state
-  await conversationState.delete(context);
+  // Clear out state to be done with ApplicationTurnState in teams ai library
+  //await conversationState.delete(context);
+ 
 };
 
 // Set the onTurnError for the singleton CloudAdapter.
 adapter.onTurnError = onTurnErrorHandler;
-
-// Create the bot that will handle incoming messages.
-const bot = new TeamsBot(conversationState, userState);
+ 
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -88,9 +120,16 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
   console.log(`\nBot Started, ${server.name} listening to ${server.url}`);
 });
 
+// Listen for user to say '/reset' and then delete conversation state
+app.message('/reset', async (context: TurnContext, state: ApplicationTurnState) => {
+  state.conversation.delete();
+  await context.sendActivity(`Ok I've deleted the current conversation state.`);
+});
+
+
 // Listen for incoming requests.
 server.post("/api/messages", async (req, res) => {
   await adapter.process(req, res, async (context) => {
-    await bot.run(context);
+    await app.run(context);
   });
 });
