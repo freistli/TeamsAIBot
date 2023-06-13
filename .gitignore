@@ -15,3 +15,4 @@ env
 .backup/*
 /devTools/
 azure.parameters.dev.json
+templates/azure/azure.parameters.dev.json
