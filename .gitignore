@@ -16,3 +16,4 @@ env/.env.local*
 !env/.env.local.sample
 .backup/*
 /devTools/
+package-lock.json

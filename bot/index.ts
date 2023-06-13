@@ -8,8 +8,7 @@ import {
   ConfigurationServiceClientCredentialFactory,
   ConfigurationBotFrameworkAuthentication,
   MemoryStorage,
-  TurnContext,
-  InputHints,
+  TurnContext
 } from "botbuilder";
 
 import config from "./config"; 
